@@ -14,6 +14,13 @@ class AppointmentsRepository {
   }
 
   /**
+   * listAll
+   */
+  public listAll(): Appointment[] {
+    return this.appointments;
+  }
+
+  /**
    * findByDate
    */
   public findByDate(date: Date): Appointment | null {
