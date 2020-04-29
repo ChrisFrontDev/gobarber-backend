@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { uuid } from 'uuidv4';
-import { parseISO, isEqual } from 'date-fns';
+import { parseISO, isEqual, startOfHour } from 'date-fns';
 
 const appointmentsRouter = Router();
 
@@ -17,8 +17,10 @@ appointmentsRouter.post('/', (request, response) => {
 
   const parsedDate = parseISO(date);
 
+  const dateHour = startOfHour(parsedDate);
+
   const alreadyHasDate = appointments.find(appointment =>
-    isEqual(appointment.date, parsedDate),
+    isEqual(appointment.date, dateHour),
   );
 
   if (alreadyHasDate)
@@ -29,7 +31,7 @@ appointmentsRouter.post('/', (request, response) => {
   const appointment = {
     id: uuid(),
     provider,
-    date: parsedDate,
+    date: dateHour,
   };
 
   appointments.push(appointment);
