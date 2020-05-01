@@ -24,6 +24,9 @@ export default function VerifyAuth(
   try {
     const decoded = verify(token, authConfig.jwt.secret);
 
+    const { sub } = decoded as TokenPayload;
+
+    request.user = { id: sub };
     return next();
   } catch (err) {
     throw new Error('invalid token');
