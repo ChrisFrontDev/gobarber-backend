@@ -6,7 +6,7 @@ import AppointmentsRepository from '../repositories/AppointmentsRepository';
 import Appointment from '../models/Appointment';
 
 interface RequestDTO {
-  provider: string;
+  provider_id: string;
   date: Date;
 }
 
@@ -14,7 +14,10 @@ class CreateAppointmentService {
   /**
    * execute
    */
-  public async execute({ date, provider }: RequestDTO): Promise<Appointment> {
+  public async execute({
+    date,
+    provider_id,
+  }: RequestDTO): Promise<Appointment> {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
     const dateHour = startOfHour(date);
 
@@ -23,7 +26,7 @@ class CreateAppointmentService {
     if (alreadyHasDate) throw Error('this hour already has booked');
 
     const appointment = appointmentsRepository.create({
-      provider,
+      provider_id,
       date: dateHour,
     });
 
