@@ -1,7 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import { getRepository } from 'typeorm';
+
 import { hash } from 'bcryptjs';
 import User from '../models/User';
+import AppError from '../errors/AppError';
 
 interface RequestDTO {
   name: string;
@@ -18,7 +20,7 @@ class CreateUserService {
     });
 
     if (userExists) {
-      throw Error('Email address already used.');
+      throw new AppError('Email address already used.', 401);
     }
 
     const hashedPassword = await hash(password, 8);
