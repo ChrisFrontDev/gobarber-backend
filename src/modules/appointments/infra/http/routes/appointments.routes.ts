@@ -8,8 +8,6 @@ import verifyAuth from '@modules/users/infra/http/middlewares/verifyAuth';
 
 const appointmentsRouter = Router();
 
-const appointmentsRepository = new AppointmentsRepository();
-
 appointmentsRouter.use(verifyAuth);
 
 // appointmentsRouter.get('/', async (request, response) => {
@@ -21,6 +19,8 @@ appointmentsRouter.post('/', async (request, response) => {
   const { provider_id, date } = request.body;
 
   const parsedDate = parseISO(date);
+
+  const appointmentsRepository = new AppointmentsRepository();
 
   const createAppointment = new CreateAppointmentService(
     appointmentsRepository,

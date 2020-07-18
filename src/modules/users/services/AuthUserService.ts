@@ -1,28 +1,30 @@
-import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import authConfig from '@config/auth';
 
 import AppError from '@shared/errors/AppError';
+import IUsersRepository from '../repositories/IUsersRepository';
 
 import User from '../infra/typeorm/entities/User';
 
-interface RequestDTO {
+interface IRequestDTO {
   email: string;
   password: string;
 }
 
+interface IResponse {
+  user: User;
+  token: string;
+}
+
 class AuthUserService {
+  constructor(private usersRepository: IUsersRepository) {}
+
   /**
    * execute
    */
-  public async execute({
-    email,
-    password,
-  }: RequestDTO): Promise<{ user: User; token: string }> {
-    const userRepository = getRepository(User);
-
-    const user = await userRepository.findOne({ where: { email } });
+  public async execute({ email, password }: IRequestDTO): Promise<IResponse> {
+    const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError('Email/Password does not match', 401);
