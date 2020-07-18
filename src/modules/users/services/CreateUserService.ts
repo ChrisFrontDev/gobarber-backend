@@ -1,6 +1,8 @@
 /* eslint-disable class-methods-use-this */
 
 import { hash } from 'bcryptjs';
+import { injectable, inject } from 'tsyringe';
+
 import AppError from '@shared/errors/AppError';
 import User from '../infra/typeorm/entities/User';
 import IUsersRepository from '../repositories/IUsersRepository';
@@ -10,9 +12,12 @@ interface IRequestDTO {
   password: string;
   email: string;
 }
-
+@injectable()
 class CreateUserService {
-  constructor(private usersRepository: IUsersRepository) {}
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
 
   public async execute({ email, name, password }: IRequestDTO): Promise<User> {
     const userExists = await this.usersRepository.findByEmail(email);
