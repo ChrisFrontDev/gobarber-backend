@@ -5,11 +5,16 @@ import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 import AuthUserService from './AuthUserService';
 import CreateUserService from './CreateUserService';
 
-describe('AuthUser', () => {
-  it('should be able to Authenticate ', async () => {
-    const fakeHashProvider = new FakeHashProvider();
-    const fakeUsersRepository = new FakeUsersRepository();
+let fakeHashProvider: FakeHashProvider;
+let fakeUsersRepository: FakeUsersRepository;
 
+describe('AuthUser', () => {
+  beforeEach(() => {
+    fakeHashProvider = new FakeHashProvider();
+    fakeUsersRepository = new FakeUsersRepository();
+  });
+
+  it('should be able to Authenticate ', async () => {
     const createUser = new CreateUserService(
       fakeUsersRepository,
       fakeHashProvider,
@@ -29,13 +34,11 @@ describe('AuthUser', () => {
 
     expect(response).toHaveProperty('token');
   });
-  it('should not be able to Authenticate whit a non existing user', async () => {
-    const fakeHashProvider = new FakeHashProvider();
-    const fakeUsersRepository = new FakeUsersRepository();
 
+  it('should not be able to Authenticate whit a non existing user', async () => {
     const authUser = new AuthUserService(fakeUsersRepository, fakeHashProvider);
 
-    expect(
+    await expect(
       authUser.execute({
         email: 'teste@teste.com.br',
         password: '123456',
@@ -44,9 +47,6 @@ describe('AuthUser', () => {
   });
 
   it('should not be able to Authenticate with wrong credentials ', async () => {
-    const fakeHashProvider = new FakeHashProvider();
-    const fakeUsersRepository = new FakeUsersRepository();
-
     const createUser = new CreateUserService(
       fakeUsersRepository,
       fakeHashProvider,
@@ -59,7 +59,7 @@ describe('AuthUser', () => {
       name: 'Jhon Doe',
     });
 
-    expect(
+    await expect(
       authUser.execute({
         email: 'teste@teste.com.br',
         password: 'wrong-password',
