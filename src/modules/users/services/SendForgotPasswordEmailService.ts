@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-
+import path from 'path';
 import { injectable, inject } from 'tsyringe';
 
 // import User from '../infra/typeorm/entities/User';
@@ -34,14 +34,21 @@ class SendForgotPasswordEmailService {
 
     const { token } = await this.userTokensRepository.generate(user.id);
 
+    const forgotPasswordTemplate = await path.resolve(
+      __dirname,
+      '..',
+      'views',
+      'forgot_password.hbs',
+    );
+
     await this.mailProvider.sendMail({
       to: { name: user.name, email: user.email },
       subject: '[GoBarber]Recuperação de senha.',
       templateData: {
-        template: 'Olá {{name}}: {{token}}',
+        file: forgotPasswordTemplate,
         variables: {
           name: user.name,
-          token,
+          link: `http://localhost:3000/reset_password?token=${token}`,
         },
       },
     });
